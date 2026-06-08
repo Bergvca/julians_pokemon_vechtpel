@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vecht Pokémon Spel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="game">
+
+  <!-- STARTSCHERM -->
+  <div id="screen-start" class="screen active">
+    <h1>Pokémon<br>Vechtspel</h1>
+    <p class="subtitle">door Julian</p>
+    <button onclick="startGame()">▶ START SPEL</button>
+  </div>
+
+  <!-- KIES POKÉMON -->
+  <div id="screen-choose-pokemon" class="screen">
+    <h2 id="choose-pokemon-title">Kies jouw Pokémon!</h2>
+    <div class="pokemon-choices" id="pokemon-choices">
+      <!-- Dynamisch gevuld via populatePokemonChoices() -->
+    </div>
+  </div>
+
+  <!-- KIES NAAM -->
+  <div id="screen-choose-name" class="screen">
+    <h2>Jouw naam?</h2>
+    <div class="selected-preview">
+      <img id="chosen-pokemon-img" src="" alt="">
+      <span id="chosen-pokemon-label"></span>
+    </div>
+    <input type="text" id="trainer-name-input" placeholder="Trainernaam..." maxlength="12">
+    <button onclick="confirmName()">Bevestigen ▶</button>
+  </div>
+
+  <!-- GEVECHT -->
+  <div id="screen-battle" class="screen">
+    <div class="battle-field">
+      <!-- Vijand HP-box linksboven -->
+      <div class="info-box enemy-box">
+        <div class="info-trainer" id="enemy-trainer-label">NIELS</div>
+        <div class="info-name" id="enemy-pokemon-name">Wartortle</div>
+        <div class="hp-bar-row">
+          <span class="hp-label-text">HP</span>
+          <div class="hp-bar-outer">
+            <div class="hp-bar-inner" id="enemy-hp-bar"></div>
+          </div>
+          <span class="hp-number" id="enemy-hp-number"></span>
+        </div>
+      </div>
+
+      <!-- Vijand sprite rechtsoven -->
+      <div class="enemy-sprite-wrap">
+        <img id="enemy-sprite" src="" alt="Vijand Pokémon">
+      </div>
+
+      <!-- Speler sprite linksonder -->
+      <div class="player-sprite-wrap">
+        <img id="player-sprite" src="" alt="Jouw Pokémon">
+      </div>
+
+      <!-- Speler HP-box rechtsonder -->
+      <div class="info-box player-box">
+        <div class="info-trainer" id="player-trainer-label"></div>
+        <div class="info-name" id="player-pokemon-name">Squirtle</div>
+        <div class="hp-bar-row">
+          <span class="hp-label-text">HP</span>
+          <div class="hp-bar-outer">
+            <div class="hp-bar-inner" id="player-hp-bar"></div>
+          </div>
+          <span class="hp-number" id="player-hp-number"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Muziekknop -->
+    <button id="music-btn" onclick="toggleMusic()" title="Muziek aan/uit">🔊</button>
+
+    <!-- Berichtbox + aanvallen -->
+    <div class="battle-ui">
+      <div id="battle-message">...</div>
+      <div id="attack-buttons"></div>
+    </div>
+  </div>
+
+  <!-- RESULTAAT -->
+  <div id="screen-result" class="screen">
+    <div id="result-icon">🏆</div>
+    <h2 id="result-title">Gewonnen!</h2>
+    <p id="result-message"></p>
+    <button id="result-btn-continue" onclick="continueToNextLevel()" style="display:none">▶ Doorgaan</button>
+    <button id="result-btn-restart" onclick="restartGame()">↩ Opnieuw</button>
+  </div>
+
+</div>
+
+<script src="data/pokemon.js"></script>
+<script src="data/levels.js"></script>
+<script src="music.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
