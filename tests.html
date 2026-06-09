@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Vecht Pokémon — tests</title>
+  <style>
+    body { font-family: -apple-system, monospace; background: #1d1f23; color: #e6e6e6; padding: 24px; }
+    h1 { margin: 0 0 16px; font-size: 18px; }
+    #results { background: #11131a; padding: 16px; border-radius: 8px; line-height: 1.5; font-size: 13px; }
+    .suite { color: #f7c948; margin-top: 14px; font-size: 14px; }
+    .pass { color: #7bd88f; }
+    .fail { color: #ff6b6b; font-weight: bold; }
+    .fail-msg { color: #ffa8a8; margin-left: 24px; font-style: italic; }
+    .summary { margin-top: 18px; padding-top: 12px; font-size: 16px; font-weight: bold; }
+    .summary.pass { color: #7bd88f; }
+    .summary.fail { color: #ff6b6b; }
+    hr { border: none; border-top: 1px solid #333; margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Vecht Pokémon — unit tests</h1>
+  <div id="results"></div>
+
+  <!-- Productie-code -->
+  <script src="data/pokemon.js"></script>
+  <script src="data/levels.js"></script>
+  <script src="music.js"></script>
+  <script src="overworld.js"></script>
+  <script src="level3.js"></script>
+  <script src="level4.js"></script>
+  <script src="game.js"></script>
+
+  <!-- Tests -->
+  <script src="tests/runner.js"></script>
+  <script src="tests/test_data.js"></script>
+  <script src="tests/test_battle.js"></script>
+  <script src="tests/test_music.js"></script>
+  <script src="tests/test_overworld.js"></script>
+
+  <script>TestRunner.run();</script>
+</body>
+</html>

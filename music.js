@@ -2,7 +2,7 @@ const BattleMusic = (() => {
   let ctx = null;
   let timer = null;
   let loopEnd = 0;
-  let muted = false;
+  let muted = false;       // blijft behouden over stop()/start() heen
   let activeLevel = 1;
 
   const R = 0;
@@ -18,14 +18,10 @@ const BattleMusic = (() => {
   const S1 = 60 / 160 / 4;
 
   const MELODY_1 = [
-    // Maat 1
     [G5, 1], [R, 1], [G5, 1], [R, 1], [G5, 1], [R, 1], [G5, 1], [Eb5, 1],
     [D5, 2], [R, 2], [Bb4, 2], [C5, 2],
-    // Maat 2
     [D5, 2], [C5, 2], [Bb4, 2], [C5, 2], [D5, 2], [Eb5, 2], [D5, 2], [R, 2],
-    // Maat 3
     [G5, 2], [F5, 1], [G5, 1], [Bb5, 4], [Ab5, 2], [G5, 2], [F5, 2], [Eb5, 2],
-    // Maat 4
     [G5, 1], [R, 1], [G5, 1], [R, 1], [G5, 1], [R, 1], [G5, 1], [Eb5, 1],
     [D5, 2], [C5, 2], [Bb4, 4],
   ];
@@ -41,14 +37,10 @@ const BattleMusic = (() => {
   const S2 = 60 / 150 / 4;
 
   const MELODY_2 = [
-    // Maat 1
     [A4, 1], [R, 1], [C5, 1], [R, 1], [E5, 1], [R, 1], [A5, 1], [R, 1],
     [G4, 2], [E5, 2], [D5, 2], [C5, 2],
-    // Maat 2
     [B4, 2], [R, 2], [A4, 2], [R, 2], [G4, 2], [F4, 2], [E5, 2], [R, 2],
-    // Maat 3
     [E5, 2], [F5, 1], [E5, 1], [D5, 2], [C5, 2], [B4, 2], [A5, 4], [R, 2],
-    // Maat 4
     [A4, 1], [R, 1], [C5, 1], [R, 1], [E5, 2], [D5, 2], [C5, 2], [B4, 2], [A4, 4],
   ];
 
@@ -107,7 +99,6 @@ const BattleMusic = (() => {
       if (ctx) return;
       activeLevel = level;
       ctx = new AudioContext();
-      muted = false;
       loopEnd = ctx.currentTime;
       tick();
       timer = setInterval(tick, 500);
@@ -117,10 +108,12 @@ const BattleMusic = (() => {
       timer = null;
       if (ctx) { ctx.close(); ctx = null; }
       loopEnd = 0;
-      muted = false;
     },
     toggleMute() {
       muted = !muted;
+      return muted;
+    },
+    isMuted() {
       return muted;
     }
   };

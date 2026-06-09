@@ -15,7 +15,7 @@ Live op: https://bergvca.github.io/julians_pokemon_vechtpel/
 Alle scripts worden als losse `<script>`-tags in `index.html` geladen, in deze volgorde:
 
 ```
-data/pokemon.js  →  data/levels.js  →  music.js  →  level3.js  →  level4.js  →  game.js
+data/pokemon.js  →  data/levels.js  →  music.js  →  overworld.js  →  level3.js  →  level4.js  →  game.js
 ```
 
 ### `data/pokemon.js`
@@ -44,15 +44,27 @@ Definieert de globale `LEVELS`-array (0-geïndexeerd, `level.id` is 1-gebaseerd)
 - Level 4: `forestPokemon[]` en `lakePokemon[]` — aparte pools voor bos en meer.
 
 ### `music.js`
-Exporteert het globale object `BattleMusic` met methoden `start(levelId)`, `stop()` en `toggleMute()`. Genereert procedureel een chiptune battle-theme via de Web Audio API (square wave melodie + triangle bass, 160 BPM). Geen externe audiobestanden.
+Exporteert het globale object `BattleMusic` met methoden `start(levelId)`, `stop()`, `toggleMute()` en `isMuted()`. Genereert procedureel een chiptune battle-theme via de Web Audio API (square wave melodie + triangle bass, 160 BPM). Geen externe audiobestanden. De mute-status blijft behouden tussen `stop()` en `start()` aanroepen, zodat de speler de muziek slechts één keer hoeft uit te zetten voor de hele sessie.
+
+### `overworld.js`
+Definieert het globale object `OverworldEngine` met:
+- `OverworldEngine.create(config)` — factory die een overworld-instance produceert met `{start(canvas), pause(), resume(wonBattle), cleanup()}`.
+- `OverworldEngine.TILES` — `{ T: 0, P: 1, G: 2, W: 3 }` (boom, pad, hoog gras, water).
+- `OverworldEngine.ROWS / COLS / TILE` — afmetingen (16 × 14 × 32px).
+- `defaultCanEnter`, `defaultPickPool`, `defaultIsEncounterTile` — pure helpers; geëxposeerd voor tests.
+
+`config`-opties: `map` (vereist), `encounterRate` (default 0.20), `ids: { counter, dpad: { up, down, left, right } }`, en optioneel `canEnter(tile, state)`, `pickPool(level, tile)`, `isEncounterTile(tile)`, `tileDrawers` (per tile-type een teken-functie). De engine verzorgt movement, drawing, dpad-binding, HUD, encounters en toasts.
 
 ### `level3.js`
-Exporteert het globale object `Overworld` met methoden `start(canvas)`, `resume(wonBattle)`, `pause()`, `cleanup()`. Beheert het top-down overworld voor level 3 op een canvas van 14×16 tegels (TILE=32px). Tegeltypes: `T` boom, `P` pad, `G` hoog gras (20% kans op wild gevecht). Besturing via pijltjestoetsen en D-pad-overlay.
+Roept `OverworldEngine.create()` aan met de level-3 map (Groene Woud, 20% encounter rate) en exporteert het resultaat als globale `Overworld`.
 
 ### `level4.js`
-Exporteert het globale object `Level4` met dezelfde interface als `Overworld`. Voegt watertegel `W` toe:
-- Watertegels (blauw meertje, rechtsonder op de kaart) zijn alleen beloopbaar met **Blastoise** (`state.selectedPokemon === 'blastoise'`). Bij een poging met een ander Pokémon verschijnt een toast-melding.
-- Encounters op `G`-tegels gebruiken `level.forestPokemon`; encounters op `W`-tegels gebruiken `level.lakePokemon`.
+Roept `OverworldEngine.create()` aan met de level-4 map (Mystiek Woud met meertje, 22% encounter rate) en exporteert het resultaat als globale `Level4`. Custom config:
+- `canEnter` — watertegels (`W`) zijn alleen beloopbaar met **Blastoise**; bij een ander Pokémon verschijnt een toast.
+- `pickPool` — `level.forestPokemon` voor gras, `level.lakePokemon` voor water.
+- `isEncounterTile` — zowel `G` als `W` triggeren wilde gevechten.
+
+Voor tests is de level-specifieke logica beschikbaar via `Level4._logic.{canEnter, pickPool, isEncounterTile, MAP}`.
 
 ### `game.js`
 Beheert de spelstatus via het globale `state`-object en manipuleert de DOM direct. Spelverloop:
@@ -93,8 +105,20 @@ Beschikbare type-klassen voor badges: `.type-water`, `.type-vuur`, `.type-plant`
 
 **Nieuw overworld-level toevoegen:**
 1. Voeg het level toe aan `LEVELS` met `type: "overworld"` en de juiste Pokémon-arrays.
-2. Maak een `levelN.js` aan naar het voorbeeld van `level4.js`.
+2. Maak een `levelN.js` aan dat `OverworldEngine.create({...})` aanroept met de map en (indien nodig) custom `canEnter`/`pickPool`/`isEncounterTile`/`tileDrawers`.
 3. Voeg een `screen-levelN`-div toe aan `index.html` met canvas en D-pad.
 4. Breid `selectPokemon()` en `endBattle()` in `game.js` uit met een check op `level.id`.
 
 **Type-systeem uitbreiden:** pas de `chart` in `typeEffectiveness()` in `game.js` aan en voeg een `.type-naam`-klasse toe in `style.css`.
+
+## Tests
+
+Open `tests.html` in een browser om de unit tests te draaien. De tests gebruiken een minimale, eigen testrunner (`tests/runner.js`) — geen dependencies. Resultaten verschijnen in de pagina en in de console.
+
+Testsuites:
+- `tests/test_data.js` — validatie van `POKEMON` en `LEVELS` (types, verwijzingen, vereiste velden)
+- `tests/test_battle.js` — `typeEffectiveness` en `calculateDamage` met gemockte randomness
+- `tests/test_music.js` — `BattleMusic` mute-persistentie en idempotente `start()`
+- `tests/test_overworld.js` — `OverworldEngine`-defaults en `Level4._logic`
+
+Helpers in de runner: `describe`, `test`, `assert`, `assertEqual`, `assertDeepEqual`, `assertThrows`, `withMockedRandom(values, fn)`, `countRandomCalls(fn)`.

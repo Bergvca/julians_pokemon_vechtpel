@@ -78,14 +78,7 @@ function confirmName() {
   startBattle();
 }
 
-function startBattle() {
-  const level = LEVELS[state.currentLevel];
-  const playerData = POKEMON[state.selectedPokemon];
-  const enemyData = POKEMON[level.pokemon];
-
-  state.playerPokemon = { ...playerData, attacks: playerData.attacks, hp: playerData.maxHp };
-  state.enemyPokemon = { ...enemyData, attacks: enemyData.attacks, hp: enemyData.maxHp };
-
+function setupBattleUI(playerData, enemyData, enemyTrainerLabel) {
   document.getElementById('player-sprite').src =
     `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${playerData.id}.png`;
   document.getElementById('enemy-sprite').src =
@@ -94,7 +87,7 @@ function startBattle() {
   document.getElementById('player-pokemon-name').textContent = playerData.name;
   document.getElementById('player-trainer-label').textContent = state.playerName;
   document.getElementById('enemy-pokemon-name').textContent = enemyData.name;
-  document.getElementById('enemy-trainer-label').textContent = level.trainerName;
+  document.getElementById('enemy-trainer-label').textContent = enemyTrainerLabel;
 
   const attackButtons = document.getElementById('attack-buttons');
   attackButtons.innerHTML = '';
@@ -109,6 +102,17 @@ function startBattle() {
   updateBattleUI();
   showScreen('battle');
   hideAttackButtons();
+}
+
+function startBattle() {
+  const level = LEVELS[state.currentLevel];
+  const playerData = POKEMON[state.selectedPokemon];
+  const enemyData = POKEMON[level.pokemon];
+
+  state.playerPokemon = { ...playerData, hp: playerData.maxHp };
+  state.enemyPokemon = { ...enemyData, hp: enemyData.maxHp };
+
+  setupBattleUI(playerData, enemyData, level.trainerName);
   BattleMusic.start(level.id);
 
   setMessage(level.intro);
@@ -252,32 +256,10 @@ function startWildBattle(pokemonKey) {
   const playerData = POKEMON[state.selectedPokemon];
   const enemyData  = POKEMON[pokemonKey];
 
-  state.playerPokemon = { ...playerData, attacks: playerData.attacks, hp: state.playerPokemon.hp };
-  state.enemyPokemon  = { ...enemyData,  attacks: enemyData.attacks,  hp: enemyData.maxHp  };
+  state.playerPokemon = { ...playerData, hp: state.playerPokemon.hp };
+  state.enemyPokemon  = { ...enemyData,  hp: enemyData.maxHp };
 
-  document.getElementById('player-sprite').src =
-    `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${playerData.id}.png`;
-  document.getElementById('enemy-sprite').src =
-    `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${enemyData.id}.png`;
-
-  document.getElementById('player-pokemon-name').textContent = playerData.name;
-  document.getElementById('player-trainer-label').textContent = state.playerName;
-  document.getElementById('enemy-pokemon-name').textContent = enemyData.name;
-  document.getElementById('enemy-trainer-label').textContent = 'Wild';
-
-  const attackButtons = document.getElementById('attack-buttons');
-  attackButtons.innerHTML = '';
-  playerData.attacks.forEach((attack, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'attack-btn';
-    btn.innerHTML = `<span class="attack-name">${attack.name}</span><span class="attack-type type-${attack.type}">${attack.type}</span>`;
-    btn.onclick = () => playerAttack(i);
-    attackButtons.appendChild(btn);
-  });
-
-  updateBattleUI();
-  showScreen('battle');
-  hideAttackButtons();
+  setupBattleUI(playerData, enemyData, 'Wild');
   BattleMusic.start(2);
 
   setMessage(`Een wilde ${enemyData.name} verschijnt!`);
