@@ -126,6 +126,27 @@ const POKEMON = {
       { name: "Vlamworp", power: 18, type: "vuur" }
     ]
   },
+  spearow: {
+    id: 21,
+    name: "Spearow",
+    type: "vlieg",
+    maxHp: 40,
+    attacks: [
+      { name: "Pikslag", power: 12, type: "vlieg" },
+      { name: "Klauwslag", power: 10, type: "normaal" }
+    ]
+  },
+  fearow: {
+    id: 22,
+    name: "Fearow",
+    type: "vlieg",
+    maxHp: 65,
+    attacks: [
+      { name: "Boordrill", power: 16, type: "vlieg" },
+      { name: "Pikstoot", power: 14, type: "vlieg" },
+      { name: "Klauw", power: 12, type: "normaal" }
+    ]
+  },
   exeggutor: {
     id: 103,
     name: "Exeggutor",

@@ -54,6 +54,7 @@ function selectPokemon(key) {
     document.getElementById('trainer-name-input').value = '';
   } else if (level.type === 'overworld') {
     state.overworldDefeated = 0;
+    state.playerPokemon = { ...p, attacks: p.attacks, hp: p.maxHp };
     showScreen('level3');
     Overworld.start(document.getElementById('overworld-canvas'));
   } else {
@@ -239,7 +240,7 @@ function startWildBattle(pokemonKey) {
   const playerData = POKEMON[state.selectedPokemon];
   const enemyData  = POKEMON[pokemonKey];
 
-  state.playerPokemon = { ...playerData, attacks: playerData.attacks, hp: playerData.maxHp };
+  state.playerPokemon = { ...playerData, attacks: playerData.attacks, hp: state.playerPokemon.hp };
   state.enemyPokemon  = { ...enemyData,  attacks: enemyData.attacks,  hp: enemyData.maxHp  };
 
   document.getElementById('player-sprite').src =
@@ -289,8 +290,19 @@ function endBattle(result) {
   if (state.battleContext === 'wild') {
     state.battleContext = null;
     setTimeout(() => {
-      showScreen('level3');
-      Overworld.resume(result === 'win');
+      if (result === 'win') {
+        showScreen('level3');
+        Overworld.resume(true);
+      } else {
+        Overworld.cleanup();
+        showScreen('result');
+        document.getElementById('result-title').textContent   = 'Verloren...';
+        document.getElementById('result-title').style.color   = '#e74c3c';
+        document.getElementById('result-message').textContent = `${state.playerPokemon.name} is gevallen in het woud!`;
+        document.getElementById('result-icon').textContent    = '💔';
+        document.getElementById('result-btn-continue').style.display = 'none';
+        document.getElementById('result-btn-restart').style.display  = 'inline-block';
+      }
     }, 800);
     return;
   }

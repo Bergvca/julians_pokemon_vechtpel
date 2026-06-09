@@ -116,10 +116,11 @@ body {
   color: white;
 }
 
-.type-water { background: #3498db; }
-.type-vuur  { background: #e74c3c; }
-.type-plant { background: #27ae60; }
+.type-water   { background: #3498db; }
+.type-vuur    { background: #e74c3c; }
+.type-plant   { background: #27ae60; }
 .type-normaal { background: #95a5a6; }
+.type-vlieg   { background: #74b9e8; }
 
 /* ─── KIES NAAM ─── */
 #screen-choose-name {
