@@ -54,7 +54,7 @@ function selectPokemon(key) {
     document.getElementById('trainer-name-input').value = '';
   } else if (level.type === 'overworld') {
     state.overworldDefeated = 0;
-    showScreen('screen-level3');
+    showScreen('level3');
     Overworld.start(document.getElementById('overworld-canvas'));
   } else {
     startBattle();
@@ -289,7 +289,7 @@ function endBattle(result) {
   if (state.battleContext === 'wild') {
     state.battleContext = null;
     setTimeout(() => {
-      showScreen('screen-level3');
+      showScreen('level3');
       Overworld.resume(result === 'win');
     }, 800);
     return;
