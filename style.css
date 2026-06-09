@@ -461,15 +461,48 @@ button:active {
   image-rendering: pixelated;
 }
 
-#overworld-hint {
-  width: 100%;
-  padding: 6px 12px;
-  font-size: 5px;
-  color: rgba(255, 255, 255, 0.55);
-  text-align: center;
-  background: rgba(0, 0, 0, 0.45);
-  flex-shrink: 0;
+/* D-pad overlay */
+#overworld-dpad {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  z-index: 20;
 }
+
+.dpad-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dpad-center {
+  width: 52px;
+  height: 52px;
+}
+
+.dpad-btn {
+  width: 52px;
+  height: 52px;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.45);
+  border-radius: 10px;
+  font-size: 18px;
+  padding: 0;
+  line-height: 1;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.dpad-btn:hover  { background: rgba(0, 0, 0, 0.75); }
+.dpad-btn:active { background: rgba(255, 255, 255, 0.25); transform: scale(0.93); }
 
 /* ─── RESULTAAT ─── */
 #screen-result {

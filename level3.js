@@ -36,8 +36,19 @@ const Overworld = (() => {
     cooldown = 0;
     active = true;
     document.addEventListener('keydown', handleKey);
+    bindDpad();
     updateHUD();
     draw();
+  }
+
+  function bindDpad() {
+    const dirs = { 'dpad-up':'up', 'dpad-down':'down', 'dpad-left':'left', 'dpad-right':'right' };
+    for (const [id, dir] of Object.entries(dirs)) {
+      const btn = document.getElementById(id);
+      if (!btn) continue;
+      btn.addEventListener('touchstart', e => { e.preventDefault(); if (active) step(dir); }, { passive: false });
+      btn.addEventListener('click', () => { if (active) step(dir); });
+    }
   }
 
   function pause()  { active = false; }
