@@ -185,17 +185,22 @@ function enemyTurn() {
 }
 
 function calculateDamage(attack, effectiveness) {
-  const variance = Math.floor(Math.random() * 5) - 2;
+  // Box-Muller normaalverdeling, std = 10% van aanvalskracht
+  const u1 = Math.random() || 1e-10;
+  const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * Math.random());
+  const variance = z * (attack.power * 0.10);
   return Math.max(1, Math.round((attack.power + variance) * effectiveness));
 }
 
 function typeEffectiveness(attackType, defenderType) {
   const chart = {
     water: { vuur: 1.5, plant: 0.67 },
-    vuur: { plant: 1.5, water: 0.67 },
-    plant: { water: 1.5, vuur: 0.67 }
+    vuur:  { plant: 1.5, water: 0.67 },
+    plant: { water: 1.5, vuur:  0.67 }
   };
-  return chart[attackType]?.[defenderType] ?? 1;
+  const modifier = chart[attackType]?.[defenderType] ?? 1;
+  if (modifier === 1) return 1;
+  return Math.random() < 0.80 ? modifier : 1;
 }
 
 function updateBattleUI() {
