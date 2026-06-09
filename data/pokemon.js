@@ -157,5 +157,38 @@ const POKEMON = {
       { name: "Tackle", power: 12, type: "normaal" },
       { name: "Zonnestraal", power: 18, type: "plant" }
     ]
+  },
+  dragonite: {
+    id: 149,
+    name: "Dragonite",
+    type: "draak",
+    maxHp: 91,
+    attacks: [
+      { name: "Drakenadem", power: 28, type: "draak" },
+      { name: "Dondervleugel", power: 18, type: "normaal" },
+      { name: "Vleugelstomp", power: 14, type: "normaal" }
+    ]
+  },
+  mew: {
+    id: 151,
+    name: "Mew",
+    type: "psycho",
+    maxHp: 120,
+    attacks: [
+      { name: "Psychoschok", power: 21, type: "psycho" },
+      { name: "Snelbal", power: 17, type: "normaal" },
+      { name: "Verdoving", power: 15, type: "psycho" }
+    ]
+  },
+  gyarados: {
+    id: 130,
+    name: "Gyarados",
+    type: "water",
+    maxHp: 95,
+    attacks: [
+      { name: "Aquastorm", power: 20, type: "water" },
+      { name: "Bijtstoot", power: 14, type: "normaal" },
+      { name: "Razernij", power: 16, type: "normaal" }
+    ]
   }
 };

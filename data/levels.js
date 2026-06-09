@@ -19,5 +19,13 @@ const LEVELS = [
     playerChoices: ["blastoise", "charizard", "exeggutor"],
     wildPokemon: ["rattata", "pidgey", "jigglypuff", "spearow", "fearow"],
     requiredDefeats: 3
+  },
+  {
+    id: 4,
+    type: "overworld",
+    playerChoices: ["dragonite", "blastoise"],
+    forestPokemon: ["mew", "fearow"],
+    lakePokemon: ["gyarados"],
+    requiredDefeats: 3
   }
 ];

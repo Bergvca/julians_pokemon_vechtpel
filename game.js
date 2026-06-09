@@ -55,8 +55,13 @@ function selectPokemon(key) {
   } else if (level.type === 'overworld') {
     state.overworldDefeated = 0;
     state.playerPokemon = { ...p, attacks: p.attacks, hp: p.maxHp };
-    showScreen('level3');
-    Overworld.start(document.getElementById('overworld-canvas'));
+    if (level.id === 4) {
+      showScreen('level4');
+      Level4.start(document.getElementById('overworld-canvas-level4'));
+    } else {
+      showScreen('level3');
+      Overworld.start(document.getElementById('overworld-canvas'));
+    }
   } else {
     startBattle();
   }
@@ -194,9 +199,11 @@ function calculateDamage(attack, effectiveness) {
 
 function typeEffectiveness(attackType, defenderType) {
   const chart = {
-    water: { vuur: 1.5, plant: 0.67 },
-    vuur:  { plant: 1.5, water: 0.67 },
-    plant: { water: 1.5, vuur:  0.67 }
+    water:  { vuur: 1.5, plant: 0.67 },
+    vuur:   { plant: 1.5, water: 0.67 },
+    plant:  { water: 1.5, vuur:  0.67 },
+    draak:  { psycho: 1.5 },
+    psycho: { draak: 0.67 }
   };
   const modifier = chart[attackType]?.[defenderType] ?? 1;
   if (modifier === 1) return 1;
@@ -279,14 +286,25 @@ function startWildBattle(pokemonKey) {
 
 function endOverworld(result) {
   showScreen('result');
+  const level = LEVELS[state.currentLevel];
+  const hasNextLevel = state.currentLevel < LEVELS.length - 1;
+  const areaName = level.id === 4 ? 'het Mystiek Woud' : 'het Groene Woud';
   const title = document.getElementById('result-title');
   const msg   = document.getElementById('result-message');
   title.style.color = '#f7c948';
-  title.textContent = 'Gewonnen!';
-  msg.textContent   = `${state.playerName} heeft het Groene Woud doorkruist!`;
-  document.getElementById('result-icon').textContent = '🏆';
-  document.getElementById('result-btn-continue').style.display = 'none';
-  document.getElementById('result-btn-restart').style.display  = 'inline-block';
+  if (hasNextLevel) {
+    title.textContent = 'Level gewonnen!';
+    msg.textContent   = `${areaName.charAt(0).toUpperCase() + areaName.slice(1)} is doorkruist! Klaar voor het volgende level?`;
+    document.getElementById('result-icon').textContent = '⭐';
+    document.getElementById('result-btn-continue').style.display = 'inline-block';
+    document.getElementById('result-btn-restart').style.display  = 'none';
+  } else {
+    title.textContent = 'Gewonnen!';
+    msg.textContent   = `${state.playerName} heeft ${areaName} doorkruist!`;
+    document.getElementById('result-icon').textContent = '🏆';
+    document.getElementById('result-btn-continue').style.display = 'none';
+    document.getElementById('result-btn-restart').style.display  = 'inline-block';
+  }
 }
 
 function endBattle(result) {
@@ -294,16 +312,20 @@ function endBattle(result) {
 
   if (state.battleContext === 'wild') {
     state.battleContext = null;
+    const isLevel4 = LEVELS[state.currentLevel].id === 4;
+    const overworldObj = isLevel4 ? Level4 : Overworld;
+    const screenName   = isLevel4 ? 'level4' : 'level3';
+    const areaName     = isLevel4 ? 'het Mystiek Woud' : 'het woud';
     setTimeout(() => {
       if (result === 'win') {
-        showScreen('level3');
-        Overworld.resume(true);
+        showScreen(screenName);
+        overworldObj.resume(true);
       } else {
-        Overworld.cleanup();
+        overworldObj.cleanup();
         showScreen('result');
         document.getElementById('result-title').textContent   = 'Verloren...';
         document.getElementById('result-title').style.color   = '#e74c3c';
-        document.getElementById('result-message').textContent = `${state.playerPokemon.name} is gevallen in het woud!`;
+        document.getElementById('result-message').textContent = `${state.playerPokemon.name} is gevallen in ${areaName}!`;
         document.getElementById('result-icon').textContent    = '💔';
         document.getElementById('result-btn-continue').style.display = 'none';
         document.getElementById('result-btn-restart').style.display  = 'inline-block';
@@ -358,6 +380,7 @@ function continueToNextLevel() {
 function restartGame() {
   BattleMusic.stop();
   Overworld.cleanup();
+  Level4.cleanup();
   state.playerName = '';
   state.selectedPokemon = null;
   state.playerPokemon = null;

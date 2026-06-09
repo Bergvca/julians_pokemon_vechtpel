@@ -121,6 +121,8 @@ body {
 .type-plant   { background: #27ae60; }
 .type-normaal { background: #95a5a6; }
 .type-vlieg   { background: #74b9e8; }
+.type-draak   { background: #2471a3; }
+.type-psycho  { background: #9b59b6; }
 
 /* ─── KIES NAAM ─── */
 #screen-choose-name {
@@ -504,6 +506,46 @@ button:active {
 
 .dpad-btn:hover  { background: rgba(0, 0, 0, 0.75); }
 .dpad-btn:active { background: rgba(255, 255, 255, 0.25); transform: scale(0.93); }
+
+/* ─── LEVEL 4: OVERWORLD ─── */
+#screen-level4 {
+  background: #1b4332;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0;
+}
+
+#overworld-hud-4 {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 7px 14px;
+  font-size: 7px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+#overworld-wrap-4 {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#overworld-dpad-4 {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  z-index: 20;
+}
 
 /* ─── RESULTAAT ─── */
 #screen-result {
