@@ -12,5 +12,12 @@ const LEVELS = [
     pokemon: "venusaur",
     intro: "Trainer Felipe daagt je uit!",
     playerChoices: ["charmeleon", "ivysaur", "wartortle"]
+  },
+  {
+    id: 3,
+    type: "overworld",
+    playerChoices: ["blastoise", "charizard", "exeggutor"],
+    wildPokemon: ["rattata", "pidgey", "jigglypuff"],
+    requiredDefeats: 3
   }
 ];

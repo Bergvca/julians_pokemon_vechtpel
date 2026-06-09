@@ -428,6 +428,49 @@ button:active {
   color: white;
 }
 
+/* ─── LEVEL 3: OVERWORLD ─── */
+#screen-level3 {
+  background: #1b4332;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0;
+}
+
+#overworld-hud {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 7px 14px;
+  font-size: 7px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+#overworld-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#overworld-canvas {
+  display: block;
+  image-rendering: pixelated;
+}
+
+#overworld-hint {
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 5px;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  background: rgba(0, 0, 0, 0.45);
+  flex-shrink: 0;
+}
+
 /* ─── RESULTAAT ─── */
 #screen-result {
   background: linear-gradient(160deg, #0d1b2a, #1b2a4a);

@@ -73,5 +73,68 @@ const POKEMON = {
       { name: "Tackle", power: 12, type: "normaal" },
       { name: "Zonneschijn", power: 25, type: "plant" }
     ]
+  },
+  rattata: {
+    id: 19,
+    name: "Rattata",
+    type: "normaal",
+    maxHp: 30,
+    attacks: [
+      { name: "Tackle", power: 10, type: "normaal" },
+      { name: "Beet", power: 12, type: "normaal" }
+    ]
+  },
+  pidgey: {
+    id: 16,
+    name: "Pidgey",
+    type: "normaal",
+    maxHp: 40,
+    attacks: [
+      { name: "Windvleugel", power: 11, type: "normaal" },
+      { name: "Klauwslag", power: 14, type: "normaal" }
+    ]
+  },
+  jigglypuff: {
+    id: 39,
+    name: "Jigglypuff",
+    type: "normaal",
+    maxHp: 55,
+    attacks: [
+      { name: "Pound", power: 12, type: "normaal" },
+      { name: "Slaaplied", power: 8, type: "normaal" }
+    ]
+  },
+  blastoise: {
+    id: 9,
+    name: "Blastoise",
+    type: "water",
+    maxHp: 79,
+    attacks: [
+      { name: "Hydropump", power: 25, type: "water" },
+      { name: "Tackle", power: 12, type: "normaal" },
+      { name: "Aquastaart", power: 18, type: "water" }
+    ]
+  },
+  charizard: {
+    id: 6,
+    name: "Charizard",
+    type: "vuur",
+    maxHp: 78,
+    attacks: [
+      { name: "Vuurstorm", power: 25, type: "vuur" },
+      { name: "Kras", power: 12, type: "normaal" },
+      { name: "Vlamworp", power: 18, type: "vuur" }
+    ]
+  },
+  exeggutor: {
+    id: 103,
+    name: "Exeggutor",
+    type: "plant",
+    maxHp: 95,
+    attacks: [
+      { name: "Bladkanon", power: 25, type: "plant" },
+      { name: "Tackle", power: 12, type: "normaal" },
+      { name: "Zonnestraal", power: 18, type: "plant" }
+    ]
   }
 };

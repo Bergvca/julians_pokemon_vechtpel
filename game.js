@@ -5,7 +5,9 @@ const state = {
   enemyPokemon: null,
   currentLevel: 0,
   battlePhase: 'idle',
-  waitingForInput: false
+  waitingForInput: false,
+  battleContext: null,   // 'wild' | null
+  overworldDefeated: 0
 };
 
 function showScreen(name) {
@@ -46,9 +48,14 @@ function selectPokemon(key) {
     `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png`;
   document.getElementById('chosen-pokemon-label').textContent = p.name;
 
+  const level = LEVELS[state.currentLevel];
   if (state.currentLevel === 0) {
     showScreen('choose-name');
     document.getElementById('trainer-name-input').value = '';
+  } else if (level.type === 'overworld') {
+    state.overworldDefeated = 0;
+    showScreen('screen-level3');
+    Overworld.start(document.getElementById('overworld-canvas'));
   } else {
     startBattle();
   }
@@ -227,8 +234,67 @@ function setMessage(msg) {
   document.getElementById('battle-message').textContent = msg;
 }
 
+function startWildBattle(pokemonKey) {
+  state.battleContext = 'wild';
+  const playerData = POKEMON[state.selectedPokemon];
+  const enemyData  = POKEMON[pokemonKey];
+
+  state.playerPokemon = { ...playerData, attacks: playerData.attacks, hp: playerData.maxHp };
+  state.enemyPokemon  = { ...enemyData,  attacks: enemyData.attacks,  hp: enemyData.maxHp  };
+
+  document.getElementById('player-sprite').src =
+    `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${playerData.id}.png`;
+  document.getElementById('enemy-sprite').src =
+    `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${enemyData.id}.png`;
+
+  document.getElementById('player-pokemon-name').textContent = playerData.name;
+  document.getElementById('player-trainer-label').textContent = state.playerName;
+  document.getElementById('enemy-pokemon-name').textContent = enemyData.name;
+  document.getElementById('enemy-trainer-label').textContent = 'Wild';
+
+  const attackButtons = document.getElementById('attack-buttons');
+  attackButtons.innerHTML = '';
+  playerData.attacks.forEach((attack, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'attack-btn';
+    btn.innerHTML = `<span class="attack-name">${attack.name}</span><span class="attack-type type-${attack.type}">${attack.type}</span>`;
+    btn.onclick = () => playerAttack(i);
+    attackButtons.appendChild(btn);
+  });
+
+  updateBattleUI();
+  showScreen('battle');
+  hideAttackButtons();
+  BattleMusic.start(2);
+
+  setMessage(`Een wilde ${enemyData.name} verschijnt!`);
+  setTimeout(() => startPlayerTurn(), 1500);
+}
+
+function endOverworld(result) {
+  showScreen('result');
+  const title = document.getElementById('result-title');
+  const msg   = document.getElementById('result-message');
+  title.style.color = '#f7c948';
+  title.textContent = 'Gewonnen!';
+  msg.textContent   = `${state.playerName} heeft het Groene Woud doorkruist!`;
+  document.getElementById('result-icon').textContent = '🏆';
+  document.getElementById('result-btn-continue').style.display = 'none';
+  document.getElementById('result-btn-restart').style.display  = 'inline-block';
+}
+
 function endBattle(result) {
   BattleMusic.stop();
+
+  if (state.battleContext === 'wild') {
+    state.battleContext = null;
+    setTimeout(() => {
+      showScreen('screen-level3');
+      Overworld.resume(result === 'win');
+    }, 800);
+    return;
+  }
+
   const defeatedTrainer = LEVELS[state.currentLevel].trainerName;
   const hasNextLevel = result === 'win' && state.currentLevel < LEVELS.length - 1;
 
@@ -274,6 +340,7 @@ function continueToNextLevel() {
 
 function restartGame() {
   BattleMusic.stop();
+  Overworld.cleanup();
   state.playerName = '';
   state.selectedPokemon = null;
   state.playerPokemon = null;
@@ -281,6 +348,8 @@ function restartGame() {
   state.currentLevel = 0;
   state.battlePhase = 'idle';
   state.waitingForInput = false;
+  state.battleContext = null;
+  state.overworldDefeated = 0;
   showScreen('start');
 }
 
