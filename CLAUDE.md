@@ -15,7 +15,7 @@ Live op: https://bergvca.github.io/julians_pokemon_vechtpel/
 Alle scripts worden als losse `<script>`-tags in `index.html` geladen, in deze volgorde:
 
 ```
-data/pokemon.js  →  data/levels.js  →  music.js  →  overworld.js  →  level3.js  →  level4.js  →  game.js
+data/pokemon.js  →  data/levels.js  →  music.js  →  overworld.js  →  level3.js  →  level4.js  →  pokedex.js  →  catch.js  →  game.js
 ```
 
 ### `data/pokemon.js`
@@ -66,17 +66,23 @@ Roept `OverworldEngine.create()` aan met de level-4 map (Mystiek Woud met meertj
 
 Voor tests is de level-specifieke logica beschikbaar via `Level4._logic.{canEnter, pickPool, isEncounterTile, MAP}`.
 
+### `pokedex.js`
+Definieert het globale object `Pokedex`. Houdt in `localStorage` (sleutel `vechtPokemon.caught`) bij welke wilde Pokémon gevangen zijn — dit blijft bewaard over sessies en herstarts heen. Methoden: `open()` / `close()` (pokedex-scherm tonen/verlaten), `getCaught()`, `isCaught(key)`, `addCaught(key)`. Het pokedex-scherm toont alle `POKEMON`-entries in een grid; niet-gevangen Pokémon verschijnen als zwart silhouet met "???". Te openen via de 📕-knop op het startscherm. Voor tests is `Pokedex.createCaughtStore(storage)` beschikbaar (injecteerbare storage).
+
+### `catch.js`
+Definieert het globale object `CatchGame` met `start(pokemonKey, onDone)` en `skip()`. Vang-minigame na het winnen van een wild gevecht (level 3 en 4): de speler swipet (pointer events, dus touch én muis) de Pokéball omhoog richting de heen-en-weer zwevende Pokémon. De worp krijgt de swipe-snelheid mee en valt onder zwaartekracht; raak binnen `HIT_RADIUS` = gevangen → `Pokedex.addCaught()` + wiebel-animatie. De speler heeft 3 ballen; daarna ontsnapt de Pokémon. `onDone(caught)` wordt altijd aangeroepen (ook bij de "Niet vangen"-knop). Pure helpers voor tests via `CatchGame._logic.{computeThrowVelocity, isHit, HIT_RADIUS, MAX_BALLS, MIN_UP_SPEED, MAX_VX, MAX_VY}`.
+
 ### `game.js`
 Beheert de spelstatus via het globale `state`-object en manipuleert de DOM direct. Spelverloop:
 
-1. `showScreen(name)` — wisselt tussen schermen (`start`, `choose-pokemon`, `choose-name`, `battle`, `level3`, `level4`, `result`)
+1. `showScreen(name)` — wisselt tussen schermen (`start`, `choose-pokemon`, `choose-name`, `battle`, `level3`, `level4`, `catch`, `pokedex`, `result`)
 2. `selectPokemon(key)`:
    - Level 0 → `choose-name` scherm
    - Overworld level → `level3` of `level4` scherm + bijbehorend `Overworld`/`Level4` object starten
    - Trainer level → `startBattle()`
 3. Gevechtsloop: `startPlayerTurn()` → `playerAttack(i)` → `enemyTurn()` → herhaal
 4. `endBattle('win'|'lose')`:
-   - Wild gevecht (`battleContext === 'wild'`): terug naar het juiste overworld-scherm via `LEVELS[state.currentLevel].id`
+   - Wild gevecht (`battleContext === 'wild'`) gewonnen: eerst de vang-minigame (`CatchGame.start(state.wildPokemonKey, ...)`), daarna terug naar het juiste overworld-scherm via `LEVELS[state.currentLevel].id`; bij verlies het resultaatscherm
    - Trainer gevecht: resultaatscherm met "Doorgaan" of "Opnieuw"
 5. `endOverworld('win')` — toont resultaatscherm; bij `hasNextLevel` verschijnt "Doorgaan"-knop
 
@@ -93,7 +99,7 @@ Beheert de spelstatus via het globale `state`-object en manipuleert de DOM direc
 Aanvalschade = `power × effectiveness` met normaalverdeelde variantie (σ = 10% van power), minimaal 1.
 
 ### `index.html` / `style.css`
-Zeven schermen gestapeld via `position: absolute`, alleen het actieve scherm heeft klasse `active` (`display: flex`): `start`, `choose-pokemon`, `choose-name`, `battle`, `level3`, `level4`, `result`.
+Negen schermen gestapeld via `position: absolute`, alleen het actieve scherm heeft klasse `active` (`display: flex`): `start`, `choose-pokemon`, `choose-name`, `battle`, `level3`, `level4`, `catch`, `pokedex`, `result`.
 
 Beschikbare type-klassen voor badges: `.type-water`, `.type-vuur`, `.type-plant`, `.type-normaal`, `.type-vlieg`, `.type-draak`, `.type-psycho`.
 
@@ -115,10 +121,23 @@ Beschikbare type-klassen voor badges: `.type-water`, `.type-vuur`, `.type-plant`
 
 Open `tests.html` in een browser om de unit tests te draaien. De tests gebruiken een minimale, eigen testrunner (`tests/runner.js`) — geen dependencies. Resultaten verschijnen in de pagina en in de console.
 
+**Headless draaien (zonder browser):** gebruik `jsc` (JavaScriptCore, standaard op macOS) met de browser-shim `tests/headless_shim.js`. De scriptvolgorde is dezelfde als in `tests.html`:
+
+```sh
+JSC=/System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc
+$JSC tests/headless_shim.js \
+  data/pokemon.js data/levels.js music.js overworld.js level3.js level4.js pokedex.js catch.js game.js \
+  tests/runner.js tests/test_data.js tests/test_battle.js tests/test_music.js tests/test_overworld.js tests/test_catch.js \
+  -e 'TestRunner.run()'
+```
+
+De uitslag verschijnt op stdout (bijv. `42/42 geslaagd, 0 mislukt`). Bij een nieuw testbestand of script: voeg het toe aan zowel `tests.html` als dit commando.
+
 Testsuites:
 - `tests/test_data.js` — validatie van `POKEMON` en `LEVELS` (types, verwijzingen, vereiste velden)
 - `tests/test_battle.js` — `typeEffectiveness` en `calculateDamage` met gemockte randomness
 - `tests/test_music.js` — `BattleMusic` mute-persistentie en idempotente `start()`
 - `tests/test_overworld.js` — `OverworldEngine`-defaults en `Level4._logic`
+- `tests/test_catch.js` — `CatchGame._logic` (swipe-snelheid, raakdetectie) en de `Pokedex`-store (persistentie, deduplicatie, corrupte JSON)
 
 Helpers in de runner: `describe`, `test`, `assert`, `assertEqual`, `assertDeepEqual`, `assertThrows`, `withMockedRandom(values, fn)`, `countRandomCalls(fn)`.

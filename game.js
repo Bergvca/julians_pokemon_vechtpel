@@ -7,7 +7,8 @@ const state = {
   battlePhase: 'idle',
   waitingForInput: false,
   battleContext: null,   // 'wild' | null
-  overworldDefeated: 0
+  overworldDefeated: 0,
+  wildPokemonKey: null
 };
 
 function showScreen(name) {
@@ -253,6 +254,7 @@ function setMessage(msg) {
 
 function startWildBattle(pokemonKey) {
   state.battleContext = 'wild';
+  state.wildPokemonKey = pokemonKey;
   const playerData = POKEMON[state.selectedPokemon];
   const enemyData  = POKEMON[pokemonKey];
 
@@ -302,8 +304,10 @@ function endBattle(result) {
     const areaName     = isLevel4 ? 'het Mystiek Woud' : 'het woud';
     setTimeout(() => {
       if (result === 'win') {
-        showScreen(screenName);
-        overworldObj.resume(true);
+        CatchGame.start(state.wildPokemonKey, () => {
+          showScreen(screenName);
+          overworldObj.resume(true);
+        });
       } else {
         overworldObj.cleanup();
         showScreen('result');
@@ -378,6 +382,7 @@ function restartGame() {
   state.waitingForInput = false;
   state.battleContext = null;
   state.overworldDefeated = 0;
+  state.wildPokemonKey = null;
   showScreen('start');
 }
 
@@ -392,6 +397,7 @@ function restartLevel() {
   state.waitingForInput = false;
   state.battleContext = null;
   state.overworldDefeated = 0;
+  state.wildPokemonKey = null;
   populatePokemonChoices();
   showScreen('choose-pokemon');
 }

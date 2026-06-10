@@ -16,6 +16,7 @@
     <h1>Pokémon<br>Vechtspel</h1>
     <p class="subtitle">door Julian</p>
     <button onclick="startGame()">▶ START SPEL</button>
+    <button id="pokedex-btn" onclick="Pokedex.open()">📕 Pokédex</button>
   </div>
 
   <!-- KIES POKÉMON -->
@@ -129,6 +130,28 @@
     </div>
   </div>
 
+  <!-- VANG MINIGAME -->
+  <div id="screen-catch" class="screen">
+    <div id="catch-message">...</div>
+    <div id="catch-arena">
+      <img id="catch-pokemon" src="" alt="Wilde Pokémon">
+      <div id="catch-ball"></div>
+      <div id="catch-flash"></div>
+    </div>
+    <div id="catch-hud">
+      <span id="catch-balls"></span>
+      <button id="catch-skip" onclick="CatchGame.skip()">Niet vangen ▶</button>
+    </div>
+  </div>
+
+  <!-- POKÉDEX -->
+  <div id="screen-pokedex" class="screen">
+    <h2>📕 Pokédex</h2>
+    <p id="pokedex-count"></p>
+    <div id="pokedex-grid"></div>
+    <button onclick="Pokedex.close()">↩ Terug</button>
+  </div>
+
   <!-- RESULTAAT -->
   <div id="screen-result" class="screen">
     <div id="result-icon">🏆</div>
@@ -146,6 +169,8 @@
 <script src="overworld.js"></script>
 <script src="level3.js"></script>
 <script src="level4.js"></script>
+<script src="pokedex.js"></script>
+<script src="catch.js"></script>
 <script src="game.js"></script>
 </body>
 </html>

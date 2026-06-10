@@ -547,6 +547,192 @@ button:active {
   z-index: 20;
 }
 
+/* ─── VANG MINIGAME ─── */
+#screen-catch {
+  background: linear-gradient(180deg, #87ceeb 0%, #a8d8a8 45%, #5a9e5a 100%);
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0;
+}
+
+#catch-message {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.72);
+  color: #fff;
+  font-size: 8px;
+  line-height: 1.8;
+  padding: 10px 14px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+#catch-arena {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#catch-pokemon {
+  position: absolute;
+  width: 96px;
+  height: 96px;
+  transform: translate(-50%, -50%);
+  image-rendering: pixelated;
+  filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
+  pointer-events: none;
+}
+
+#catch-ball {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #e3350d 0%, #e3350d 44%, #222 44%, #222 56%, #fff 56%, #fff 100%);
+  border: 2px solid #222;
+  transform: translate(-50%, -50%);
+  cursor: grab;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.35);
+}
+
+#catch-ball::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border: 3px solid #222;
+  border-radius: 50%;
+}
+
+#catch-flash {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#catch-flash.flash {
+  animation: catch-flash 0.6s ease;
+}
+
+@keyframes catch-flash {
+  0%   { opacity: 0; }
+  30%  { opacity: 0.95; }
+  100% { opacity: 0; }
+}
+
+#catch-ball.wobble {
+  animation: ball-wobble 0.55s ease-in-out 3;
+}
+
+@keyframes ball-wobble {
+  0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+  25%      { transform: translate(-50%, -50%) rotate(-22deg); }
+  75%      { transform: translate(-50%, -50%) rotate(22deg); }
+}
+
+#catch-hud {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.65);
+  padding: 8px 14px;
+  flex-shrink: 0;
+}
+
+#catch-balls {
+  font-size: 12px;
+  color: #fff;
+  letter-spacing: 4px;
+}
+
+#catch-skip {
+  font-size: 7px;
+  padding: 8px 14px;
+}
+
+/* ─── POKÉDEX ─── */
+#screen-pokedex {
+  background: linear-gradient(160deg, #7a1f1f, #b03030);
+  gap: 14px;
+  padding: 20px;
+  justify-content: flex-start;
+}
+
+#screen-pokedex h2 {
+  color: #fff;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+#pokedex-count {
+  font-size: 8px;
+  color: #ffd9d9;
+}
+
+#pokedex-grid {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 4px;
+}
+
+.pokedex-entry {
+  background: rgba(255, 255, 255, 0.92);
+  border: 2px solid #5a1010;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 2px;
+  gap: 4px;
+}
+
+.pokedex-entry img {
+  width: 56px;
+  height: 56px;
+  image-rendering: pixelated;
+}
+
+.pokedex-entry span {
+  font-size: 6px;
+  color: #2c3e50;
+  text-align: center;
+}
+
+.pokedex-entry:not(.caught) img {
+  filter: brightness(0);
+  opacity: 0.45;
+}
+
+.pokedex-entry:not(.caught) span {
+  color: #999;
+}
+
+/* ─── POKÉDEX-KNOP (startscherm) ─── */
+#pokedex-btn {
+  background: #3498db;
+  border-bottom-color: #21618c;
+  margin-top: -24px;
+}
+
+#pokedex-btn:hover {
+  background: #2980b9;
+}
+
 /* ─── RESULTAAT ─── */
 #screen-result {
   background: linear-gradient(160deg, #0d1b2a, #1b2a4a);
