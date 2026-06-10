@@ -3,7 +3,7 @@
 
 const OverworldEngine = (() => {
   const ROWS = 16, COLS = 14, TILE = 32;
-  const TILES = { T: 0, P: 1, G: 2, W: 3 };
+  const TILES = { T: 0, P: 1, G: 2, W: 3, E: 4 };
 
   // ── Tile drawers ────────────────────────────────────────────────
   function drawTree(ctx, x, y) {
@@ -58,11 +58,22 @@ const OverworldEngine = (() => {
     }
   }
 
+  function drawExit(ctx, x, y) {
+    drawPath(ctx, x, y);
+    ctx.fillStyle = '#5b3a1e';
+    ctx.fillRect(x + 5, y + 2, TILE - 10, TILE - 4);
+    ctx.fillStyle = '#f7c948';
+    ctx.fillRect(x + 9, y + 6, TILE - 18, TILE - 8);
+    ctx.fillStyle = '#fff3b0';
+    ctx.fillRect(x + 12, y + 9, TILE - 24, TILE - 14);
+  }
+
   const DEFAULT_TILE_DRAWERS = {
     [TILES.T]: drawTree,
     [TILES.P]: drawPath,
     [TILES.G]: drawGrass,
-    [TILES.W]: drawWater
+    [TILES.W]: drawWater,
+    [TILES.E]: drawExit
   };
 
   // ── Pure helpers (handig voor tests) ────────────────────────────
@@ -97,6 +108,16 @@ const OverworldEngine = (() => {
     let active = false;
     let toast = null;
 
+    // API voor level-specifieke hooks (onStart, onStep, onResume, drawExtras)
+    const api = {
+      getPlayer: () => player,
+      draw: () => draw(),
+      showToast: msg => { showToast(msg); draw(); },
+      pause: () => pause(),
+      cleanup: () => cleanup(),
+      startFight: pokemonKey => startFight(pokemonKey)
+    };
+
     function start(canvasEl) {
       canvas = canvasEl;
       ctx = canvas.getContext('2d');
@@ -109,6 +130,7 @@ const OverworldEngine = (() => {
       document.addEventListener('keydown', handleKey);
       bindDpad();
       updateHUD();
+      if (config.onStart) config.onStart(api);
       draw();
     }
 
@@ -125,7 +147,9 @@ const OverworldEngine = (() => {
     function pause() { active = false; }
 
     function resume(wonBattle) {
-      if (wonBattle) {
+      if (config.onResume) {
+        config.onResume(api, wonBattle);
+      } else if (wonBattle) {
         state.overworldDefeated = (state.overworldDefeated || 0) + 1;
         updateHUD();
         const needed = LEVELS[state.currentLevel].requiredDefeats;
@@ -166,10 +190,15 @@ const OverworldEngine = (() => {
         draw();
         return;
       }
+      const prev = { col: player.col, row: player.row };
       player.col = nc;
       player.row = nr;
       if (cooldown > 0) cooldown--;
       draw();
+      if (config.onStep) {
+        config.onStep(api, tile, prev);
+        if (!active) return;
+      }
       if (isEncounterTile(tile) && cooldown === 0 && Math.random() < encounterRate) {
         flashAndFight();
       }
@@ -180,17 +209,21 @@ const OverworldEngine = (() => {
     }
 
     function flashAndFight() {
-      active = false;
       const level = LEVELS[state.currentLevel];
       const tile = map[player.row][player.col];
       const pool = pickPool(level, tile);
+      startFight(pool[Math.floor(Math.random() * pool.length)]);
+    }
+
+    function startFight(pokemonKey) {
+      active = false;
       let f = 0;
       const iv = setInterval(() => {
         canvas.style.filter = (f % 2 === 0) ? 'brightness(4)' : '';
         if (++f >= 6) {
           clearInterval(iv);
           canvas.style.filter = '';
-          startWildBattle(pool[Math.floor(Math.random() * pool.length)]);
+          startWildBattle(pokemonKey);
         }
       }, 90);
     }
@@ -203,6 +236,7 @@ const OverworldEngine = (() => {
           if (drawer) drawer(ctx, c * TILE, r * TILE);
         }
       }
+      if (config.drawExtras) config.drawExtras(ctx, api);
       drawPlayer();
       if (toast) {
         drawToast();
@@ -313,10 +347,15 @@ const OverworldEngine = (() => {
     }
 
     function updateHUD() {
+      const el = document.getElementById(ids.counter);
+      if (!el) return;
+      if (config.hudText) {
+        el.textContent = config.hudText();
+        return;
+      }
       const count = state.overworldDefeated || 0;
       const required = LEVELS[state.currentLevel]?.requiredDefeats || 3;
-      const el = document.getElementById(ids.counter);
-      if (el) el.textContent = `Verslagen: ${count} / ${required}`;
+      el.textContent = `Verslagen: ${count} / ${required}`;
     }
 
     return { start, pause, resume, cleanup };

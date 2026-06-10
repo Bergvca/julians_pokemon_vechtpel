@@ -73,7 +73,12 @@ body {
 
 .pokemon-choices {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding: 4px;
 }
 
 .pokemon-card {
@@ -431,15 +436,15 @@ button:active {
   color: white;
 }
 
-/* ─── LEVEL 3: OVERWORLD ─── */
-#screen-level3 {
+/* ─── OVERWORLD- EN DOOLHOF-LEVELS ─── */
+.screen-overworld {
   background: #1b4332;
   flex-direction: column;
   justify-content: flex-start;
   gap: 0;
 }
 
-#overworld-hud {
+.overworld-hud {
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -451,7 +456,7 @@ button:active {
   flex-shrink: 0;
 }
 
-#overworld-wrap {
+.overworld-wrap {
   flex: 1;
   display: flex;
   align-items: center;
@@ -459,13 +464,13 @@ button:active {
   overflow: hidden;
 }
 
-#overworld-canvas {
+.overworld-canvas {
   display: block;
   image-rendering: pixelated;
 }
 
 /* D-pad overlay */
-#overworld-dpad {
+.overworld-dpad {
   position: absolute;
   bottom: 24px;
   left: 50%;
@@ -506,46 +511,6 @@ button:active {
 
 .dpad-btn:hover  { background: rgba(0, 0, 0, 0.75); }
 .dpad-btn:active { background: rgba(255, 255, 255, 0.25); transform: scale(0.93); }
-
-/* ─── LEVEL 4: OVERWORLD ─── */
-#screen-level4 {
-  background: #1b4332;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 0;
-}
-
-#overworld-hud-4 {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.65);
-  padding: 7px 14px;
-  font-size: 7px;
-  color: #fff;
-  flex-shrink: 0;
-}
-
-#overworld-wrap-4 {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-#overworld-dpad-4 {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  z-index: 20;
-}
 
 /* ─── VANG MINIGAME ─── */
 #screen-catch {

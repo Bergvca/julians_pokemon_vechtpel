@@ -190,5 +190,16 @@ const POKEMON = {
       { name: "Bijtstoot", power: 14, type: "normaal" },
       { name: "Razernij", power: 16, type: "normaal" }
     ]
+  },
+  gengar: {
+    id: 94,
+    name: "Gengar",
+    type: "psycho",
+    maxHp: 85,
+    attacks: [
+      { name: "Schaduwbal", power: 21, type: "psycho" },
+      { name: "Spookklauw", power: 16, type: "normaal" },
+      { name: "Droomvreter", power: 18, type: "psycho" }
+    ]
   }
 };

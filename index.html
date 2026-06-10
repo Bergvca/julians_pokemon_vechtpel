@@ -89,16 +89,16 @@
   </div>
 
   <!-- LEVEL 3: OVERWORLD -->
-  <div id="screen-level3" class="screen">
-    <div id="overworld-hud">
-      <span id="overworld-title">🌲 Groene Woud</span>
+  <div id="screen-level3" class="screen screen-overworld">
+    <div class="overworld-hud">
+      <span>🌲 Groene Woud</span>
       <span id="overworld-counter">Verslagen: 0 / 3</span>
     </div>
-    <div id="overworld-wrap">
-      <canvas id="overworld-canvas"></canvas>
+    <div class="overworld-wrap">
+      <canvas id="overworld-canvas-level3" class="overworld-canvas"></canvas>
     </div>
     <!-- D-pad overlay -->
-    <div id="overworld-dpad">
+    <div class="overworld-dpad">
       <button class="dpad-btn" id="dpad-up">▲</button>
       <div class="dpad-row">
         <button class="dpad-btn" id="dpad-left">◀</button>
@@ -110,16 +110,16 @@
   </div>
 
   <!-- LEVEL 4: OVERWORLD -->
-  <div id="screen-level4" class="screen">
-    <div id="overworld-hud-4">
-      <span id="overworld-title-4">🌲 Mystiek Woud</span>
+  <div id="screen-level4" class="screen screen-overworld">
+    <div class="overworld-hud">
+      <span>🌲 Mystiek Woud</span>
       <span id="overworld-counter-4">Verslagen: 0 / 3</span>
     </div>
-    <div id="overworld-wrap-4">
-      <canvas id="overworld-canvas-level4"></canvas>
+    <div class="overworld-wrap">
+      <canvas id="overworld-canvas-level4" class="overworld-canvas"></canvas>
     </div>
     <!-- D-pad overlay -->
-    <div id="overworld-dpad-4">
+    <div class="overworld-dpad">
       <button class="dpad-btn" id="dpad-up-4">▲</button>
       <div class="dpad-row">
         <button class="dpad-btn" id="dpad-left-4">◀</button>
@@ -127,6 +127,48 @@
         <button class="dpad-btn" id="dpad-right-4">▶</button>
       </div>
       <button class="dpad-btn" id="dpad-down-4">▼</button>
+    </div>
+  </div>
+
+  <!-- LEVEL 5: SPOOKDOOLHOF -->
+  <div id="screen-level5" class="screen screen-overworld">
+    <div class="overworld-hud">
+      <span>👻 Spookdoolhof</span>
+      <span id="overworld-counter-5"></span>
+    </div>
+    <div class="overworld-wrap">
+      <canvas id="overworld-canvas-level5" class="overworld-canvas"></canvas>
+    </div>
+    <!-- D-pad overlay -->
+    <div class="overworld-dpad">
+      <button class="dpad-btn" id="dpad-up-5">▲</button>
+      <div class="dpad-row">
+        <button class="dpad-btn" id="dpad-left-5">◀</button>
+        <div class="dpad-center"></div>
+        <button class="dpad-btn" id="dpad-right-5">▶</button>
+      </div>
+      <button class="dpad-btn" id="dpad-down-5">▼</button>
+    </div>
+  </div>
+
+  <!-- LEVEL 6: SCHADUWDOOLHOF -->
+  <div id="screen-level6" class="screen screen-overworld">
+    <div class="overworld-hud">
+      <span>👻 Schaduwdoolhof</span>
+      <span id="overworld-counter-6"></span>
+    </div>
+    <div class="overworld-wrap">
+      <canvas id="overworld-canvas-level6" class="overworld-canvas"></canvas>
+    </div>
+    <!-- D-pad overlay -->
+    <div class="overworld-dpad">
+      <button class="dpad-btn" id="dpad-up-6">▲</button>
+      <div class="dpad-row">
+        <button class="dpad-btn" id="dpad-left-6">◀</button>
+        <div class="dpad-center"></div>
+        <button class="dpad-btn" id="dpad-right-6">▶</button>
+      </div>
+      <button class="dpad-btn" id="dpad-down-6">▼</button>
     </div>
   </div>
 
@@ -169,6 +211,9 @@
 <script src="overworld.js"></script>
 <script src="level3.js"></script>
 <script src="level4.js"></script>
+<script src="maze.js"></script>
+<script src="level5.js"></script>
+<script src="level6.js"></script>
 <script src="pokedex.js"></script>
 <script src="catch.js"></script>
 <script src="game.js"></script>

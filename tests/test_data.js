@@ -40,11 +40,22 @@ describe('LEVELS-data', () => {
 
   test('trainer-levels verwijzen naar een bekende vijand-Pokémon', () => {
     for (const level of LEVELS) {
-      if (level.type !== 'overworld') {
+      if (!level.type) {
         assert(POKEMON[level.pokemon], `level ${level.id}: pokemon "${level.pokemon}" bestaat niet`);
         assert(level.trainerName, `level ${level.id}: trainerName ontbreekt`);
         assert(level.intro, `level ${level.id}: intro ontbreekt`);
       }
+    }
+  });
+
+  test('maze-levels hebben een areaName en kiezen uit de Pokédex', () => {
+    const mazes = LEVELS.filter(l => l.type === 'maze');
+    assert(mazes.length > 0, 'verwacht minstens één maze-level');
+    for (const level of mazes) {
+      assert(level.areaName, `level ${level.id}: areaName ontbreekt`);
+      assertEqual(level.choicesFromPokedex, true, `level ${level.id}: choicesFromPokedex ontbreekt`);
+      assert(Array.isArray(level.playerChoices) && level.playerChoices.length > 0,
+        `level ${level.id}: fallback playerChoices ontbreekt`);
     }
   });
 

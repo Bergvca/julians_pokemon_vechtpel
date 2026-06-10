@@ -16,6 +16,10 @@ function showScreen(name) {
   document.getElementById('screen-' + name).classList.add('active');
 }
 
+function overworldForLevel(levelId) {
+  return { 3: Overworld, 4: Level4, 5: Level5, 6: Level6 }[levelId];
+}
+
 function startGame() {
   state.currentLevel = 0;
   populatePokemonChoices();
@@ -24,11 +28,19 @@ function startGame() {
 
 function populatePokemonChoices() {
   const level = LEVELS[state.currentLevel];
-  document.getElementById('choose-pokemon-title').textContent =
-    `Level ${level.id}: Kies jouw Pokémon!`;
+  let choices = level.playerChoices;
+  let title = `Level ${level.id}: Kies jouw Pokémon!`;
+  if (level.choicesFromPokedex) {
+    const caught = Pokedex.getCaught();
+    if (caught.length > 0) {
+      choices = caught;
+      title = `Level ${level.id}: Kies een gevangen Pokémon!`;
+    }
+  }
+  document.getElementById('choose-pokemon-title').textContent = title;
   const container = document.getElementById('pokemon-choices');
   container.innerHTML = '';
-  for (const key of level.playerChoices) {
+  for (const key of choices) {
     const p = POKEMON[key];
     const div = document.createElement('div');
     div.className = 'pokemon-card';
@@ -53,16 +65,12 @@ function selectPokemon(key) {
   if (state.currentLevel === 0) {
     showScreen('choose-name');
     document.getElementById('trainer-name-input').value = '';
-  } else if (level.type === 'overworld') {
+  } else if (level.type === 'overworld' || level.type === 'maze') {
     state.overworldDefeated = 0;
     state.playerPokemon = { ...p, attacks: p.attacks, hp: p.maxHp };
-    if (level.id === 4) {
-      showScreen('level4');
-      Level4.start(document.getElementById('overworld-canvas-level4'));
-    } else {
-      showScreen('level3');
-      Overworld.start(document.getElementById('overworld-canvas'));
-    }
+    showScreen('level' + level.id);
+    overworldForLevel(level.id).start(
+      document.getElementById('overworld-canvas-level' + level.id));
   } else {
     startBattle();
   }
@@ -272,7 +280,7 @@ function endOverworld(result) {
   showScreen('result');
   const level = LEVELS[state.currentLevel];
   const hasNextLevel = state.currentLevel < LEVELS.length - 1;
-  const areaName = level.id === 4 ? 'het Mystiek Woud' : 'het Groene Woud';
+  const areaName = level.areaName || 'het woud';
   const title = document.getElementById('result-title');
   const msg   = document.getElementById('result-message');
   title.style.color = '#f7c948';
@@ -298,10 +306,10 @@ function endBattle(result) {
 
   if (state.battleContext === 'wild') {
     state.battleContext = null;
-    const isLevel4 = LEVELS[state.currentLevel].id === 4;
-    const overworldObj = isLevel4 ? Level4 : Overworld;
-    const screenName   = isLevel4 ? 'level4' : 'level3';
-    const areaName     = isLevel4 ? 'het Mystiek Woud' : 'het woud';
+    const level = LEVELS[state.currentLevel];
+    const overworldObj = overworldForLevel(level.id);
+    const screenName   = 'level' + level.id;
+    const areaName     = level.areaName || 'het woud';
     setTimeout(() => {
       if (result === 'win') {
         CatchGame.start(state.wildPokemonKey, () => {
@@ -363,6 +371,22 @@ function endBattle(result) {
   }, 800);
 }
 
+// Een Gengar heeft de speler gepakt in het doolhof (level 5/6).
+function mazeGameOver() {
+  BattleMusic.stop();
+  const areaName = LEVELS[state.currentLevel].areaName || 'het doolhof';
+  showScreen('result');
+  document.getElementById('result-title').textContent   = 'Gepakt!';
+  document.getElementById('result-title').style.color   = '#e74c3c';
+  document.getElementById('result-message').textContent =
+    `Gengar heeft je gepakt in ${areaName}! Probeer het nog eens.`;
+  document.getElementById('result-icon').textContent    = '👻';
+  document.getElementById('result-btn-continue').style.display = 'none';
+  const btnRestart = document.getElementById('result-btn-restart');
+  btnRestart.style.display = 'inline-block';
+  btnRestart.onclick = restartLevel;
+}
+
 function continueToNextLevel() {
   state.currentLevel++;
   populatePokemonChoices();
@@ -371,8 +395,7 @@ function continueToNextLevel() {
 
 function restartGame() {
   BattleMusic.stop();
-  Overworld.cleanup();
-  Level4.cleanup();
+  [Overworld, Level4, Level5, Level6].forEach(o => o.cleanup());
   state.playerName = '';
   state.selectedPokemon = null;
   state.playerPokemon = null;
@@ -388,8 +411,7 @@ function restartGame() {
 
 function restartLevel() {
   BattleMusic.stop();
-  Overworld.cleanup();
-  Level4.cleanup();
+  [Overworld, Level4, Level5, Level6].forEach(o => o.cleanup());
   state.selectedPokemon = null;
   state.playerPokemon = null;
   state.enemyPokemon = null;
