@@ -108,7 +108,7 @@ const POKEMON = {
     id: 9,
     name: "Blastoise",
     type: "water",
-    maxHp: 79,
+    maxHp: 120,
     attacks: [
       { name: "Hydropump", power: 25, type: "water" },
       { name: "Tackle", power: 12, type: "normaal" },
@@ -140,7 +140,7 @@ const POKEMON = {
     id: 22,
     name: "Fearow",
     type: "vlieg",
-    maxHp: 65,
+    maxHp: 50,
     attacks: [
       { name: "Boordrill", power: 16, type: "vlieg" },
       { name: "Pikstoot", power: 14, type: "vlieg" },
@@ -173,7 +173,7 @@ const POKEMON = {
     id: 151,
     name: "Mew",
     type: "psycho",
-    maxHp: 120,
+    maxHp: 100,
     attacks: [
       { name: "Psychoschok", power: 21, type: "psycho" },
       { name: "Snelbal", power: 17, type: "normaal" },
