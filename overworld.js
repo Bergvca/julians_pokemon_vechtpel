@@ -212,17 +212,84 @@ const OverworldEngine = (() => {
 
     function drawPlayer() {
       const x = player.col * TILE, y = player.row * TILE;
-      ctx.fillStyle = '#e63946';
-      ctx.fillRect(x + 7, y + 8, TILE - 14, TILE - 14);
-      ctx.fillStyle = 'white';
-      ctx.beginPath();
-      const m = TILE / 2;
-      if (player.dir === 'up')    { ctx.moveTo(x + m, y + 3);        ctx.lineTo(x + m - 5, y + 13);        ctx.lineTo(x + m + 5, y + 13); }
-      if (player.dir === 'down')  { ctx.moveTo(x + m, y + TILE - 3); ctx.lineTo(x + m - 5, y + TILE - 13); ctx.lineTo(x + m + 5, y + TILE - 13); }
-      if (player.dir === 'left')  { ctx.moveTo(x + 3, y + m);        ctx.lineTo(x + 13, y + m - 5);        ctx.lineTo(x + 13, y + m + 5); }
-      if (player.dir === 'right') { ctx.moveTo(x + TILE - 3, y + m); ctx.lineTo(x + TILE - 13, y + m - 5); ctx.lineTo(x + TILE - 13, y + m + 5); }
-      ctx.closePath();
-      ctx.fill();
+      const dir = player.dir;
+      const SKIN  = '#F5CBA7';
+      const HAIR  = '#F4C430';
+      const SHIRT = '#3A7BD5';
+      const PANTS = '#2C3E5A';
+      const SHOE  = '#7B5E3A';
+      const FRAME = '#222222';
+      ctx.save();
+
+      // Schoenen
+      ctx.fillStyle = SHOE;
+      ctx.fillRect(x + 10, y + 26, 5, 4);
+      ctx.fillRect(x + 17, y + 26, 5, 4);
+
+      // Broek / benen
+      ctx.fillStyle = PANTS;
+      ctx.fillRect(x + 11, y + 16, 10, 3);
+      ctx.fillRect(x + 11, y + 18, 4,  9);
+      ctx.fillRect(x + 17, y + 18, 4,  9);
+
+      // Shirt + mouwen
+      ctx.fillStyle = SHIRT;
+      ctx.fillRect(x + 10, y + 10, 12, 7);
+      ctx.fillRect(x +  7, y + 10,  4, 5);
+      ctx.fillRect(x + 21, y + 10,  4, 5);
+
+      // Onderarm huid
+      ctx.fillStyle = SKIN;
+      ctx.fillRect(x +  8, y + 15, 3, 3);
+      ctx.fillRect(x + 21, y + 15, 3, 3);
+
+      // Nek
+      ctx.fillStyle = SKIN;
+      ctx.fillRect(x + 14, y + 8, 4, 3);
+
+      // Hoofd
+      ctx.fillStyle = SKIN;
+      ctx.fillRect(x + 12, y + 2, 8, 7);
+
+      // Blond haar
+      ctx.fillStyle = HAIR;
+      ctx.fillRect(x + 12, y + 1, 8, 3);
+      ctx.fillRect(x + 11, y + 2, 2, 5);
+      ctx.fillRect(x + 19, y + 2, 2, 5);
+
+      // Richting-specifieke gezichtsdetails
+      if (dir === 'up') {
+        ctx.fillStyle = HAIR;
+        ctx.fillRect(x + 12, y + 2, 8, 5); // achterkant hoofd: haar over gezicht
+      } else if (dir === 'down') {
+        ctx.fillStyle = '#333';
+        ctx.fillRect(x + 14, y + 7, 1, 1); // linkeroog
+        ctx.fillRect(x + 17, y + 7, 1, 1); // rechteroog
+        ctx.strokeStyle = FRAME;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x + 13, y + 6, 3, 2); // links glas
+        ctx.strokeRect(x + 16, y + 6, 3, 2); // rechts glas
+        ctx.fillStyle = FRAME;
+        ctx.fillRect(x + 16, y + 7, 1, 1);   // neusstuk bril
+      } else if (dir === 'left') {
+        ctx.fillStyle = '#333';
+        ctx.fillRect(x + 14, y + 7, 1, 1);
+        ctx.strokeStyle = FRAME;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x + 13, y + 6, 3, 2);
+        ctx.fillStyle = FRAME;
+        ctx.fillRect(x + 12, y + 7, 1, 1);   // pootje bril links
+      } else if (dir === 'right') {
+        ctx.fillStyle = '#333';
+        ctx.fillRect(x + 17, y + 7, 1, 1);
+        ctx.strokeStyle = FRAME;
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x + 16, y + 6, 3, 2);
+        ctx.fillStyle = FRAME;
+        ctx.fillRect(x + 19, y + 7, 1, 1);   // pootje bril rechts
+      }
+
+      ctx.restore();
     }
 
     function drawToast() {

@@ -285,7 +285,9 @@ function endOverworld(result) {
     msg.textContent   = `${state.playerName} heeft ${areaName} doorkruist!`;
     document.getElementById('result-icon').textContent = '🏆';
     document.getElementById('result-btn-continue').style.display = 'none';
-    document.getElementById('result-btn-restart').style.display  = 'inline-block';
+    const btnRestart = document.getElementById('result-btn-restart');
+    btnRestart.style.display  = 'inline-block';
+    btnRestart.onclick = restartGame;
   }
 }
 
@@ -310,7 +312,9 @@ function endBattle(result) {
         document.getElementById('result-message').textContent = `${state.playerPokemon.name} is gevallen in ${areaName}!`;
         document.getElementById('result-icon').textContent    = '💔';
         document.getElementById('result-btn-continue').style.display = 'none';
-        document.getElementById('result-btn-restart').style.display  = 'inline-block';
+        const btnRestart = document.getElementById('result-btn-restart');
+        btnRestart.style.display  = 'inline-block';
+        btnRestart.onclick = restartLevel;
       }
     }, 800);
     return;
@@ -341,6 +345,7 @@ function endBattle(result) {
         document.getElementById('result-icon').textContent = '🏆';
         btnContinue.style.display = 'none';
         btnRestart.style.display = 'inline-block';
+        btnRestart.onclick = restartGame;
       }
     } else {
       title.textContent = 'Verloren...';
@@ -349,6 +354,7 @@ function endBattle(result) {
       document.getElementById('result-icon').textContent = '💔';
       btnContinue.style.display = 'none';
       btnRestart.style.display = 'inline-block';
+      btnRestart.onclick = restartLevel;
     }
   }, 800);
 }
@@ -373,6 +379,21 @@ function restartGame() {
   state.battleContext = null;
   state.overworldDefeated = 0;
   showScreen('start');
+}
+
+function restartLevel() {
+  BattleMusic.stop();
+  Overworld.cleanup();
+  Level4.cleanup();
+  state.selectedPokemon = null;
+  state.playerPokemon = null;
+  state.enemyPokemon = null;
+  state.battlePhase = 'idle';
+  state.waitingForInput = false;
+  state.battleContext = null;
+  state.overworldDefeated = 0;
+  populatePokemonChoices();
+  showScreen('choose-pokemon');
 }
 
 function toggleMusic() {
