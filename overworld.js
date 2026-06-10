@@ -107,6 +107,7 @@ const OverworldEngine = (() => {
     let cooldown = 0;
     let active = false;
     let toast = null;
+    let dpadBound = false;
 
     // API voor level-specifieke hooks (onStart, onStep, onResume, drawExtras)
     const api = {
@@ -135,6 +136,11 @@ const OverworldEngine = (() => {
     }
 
     function bindDpad() {
+      // Eén keer per instance: start() wordt bij elke (her)start aangeroepen
+      // en zonder deze guard stapelen de listeners zich op, waardoor één
+      // druk op de D-pad meerdere stappen tegelijk uitvoert.
+      if (dpadBound) return;
+      dpadBound = true;
       for (const dir of ['up', 'down', 'left', 'right']) {
         const id = ids.dpad[dir];
         const btn = document.getElementById(id);

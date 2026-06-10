@@ -76,7 +76,7 @@ Voor tests is de level-specifieke logica beschikbaar via `Level4._logic.{canEnte
 Definieert het globale object `MazeLevel` met `MazeLevel.create({map, gengarStarts, ids})` — gedeelde laag bovenop `OverworldEngine` voor doolhof-levels. Gedrag:
 - Geen wilde encounters (`encounterRate: 0`); alleen bomen (`T`) blokkeren.
 - De speler wint door de uitgangstegel (`E`) te bereiken → `endOverworld('win')`.
-- Eén of meer **Gengars** bewegen turn-based (één stap per spelerstap). Een Gengar **ziet** de speler alleen recht vooruit in zijn kijkrichting (`VISION_RANGE` = 6 tegels, geblokkeerd door muren); het zichtveld wordt als paarse tegels getekend. Ziet hij de speler → achtervolging (greedy, grootste delta-as eerst); anders patrouille (75% rechtdoor).
+- Eén of meer **Gengars** bewegen turn-based (één stap per spelerstap). Een Gengar **ziet** de speler alleen recht vooruit in zijn kijkrichting (`VISION_RANGE` = 6 tegels, geblokkeerd door muren); het zichtveld wordt als paarse tegels getekend. Ziet hij de speler → achtervolging (greedy, grootste delta-as eerst); anders patrouille (75% rechtdoor). Een Gengar kan **niet omdraaien** (alleen vooruit, links of rechts; behalve in een doodlopend stuk), zodat de speler hem van achteren kan besluipen.
 - Raakt een Gengar de speler (of stapt de speler frontaal op een Gengar) → `mazeGameOver()`. Stapt de speler **van achteren** op een Gengar (bepaald via dot-product van kijkrichting en vorige spelerpositie) → battle via `api.startFight('gengar')`; na winst verdwijnt die Gengar.
 
 Pure helpers voor tests via `MazeLevel._logic.{isWalkable, canSee, isBehind, chaseStep, patrolStep}` en `MazeLevel.VISION_RANGE`.

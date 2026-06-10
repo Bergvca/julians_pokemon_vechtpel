@@ -9,6 +9,7 @@ const MazeLevel = (() => {
   const VISION_RANGE = 6;
   const DELTAS = { up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] };
   const DIRS = Object.keys(DELTAS);
+  const OPPOSITE = { up: 'down', down: 'up', left: 'right', right: 'left' };
   const GENGAR_SPRITE = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/94.png';
 
   // ── Pure helpers (geëxposeerd voor tests) ────────────────────────
@@ -39,6 +40,7 @@ const MazeLevel = (() => {
   }
 
   // Eén stap richting de speler (grootste afstand eerst, dan de andere as).
+  // Omdraaien mag niet: zo kan de speler hem van achteren blijven besluipen.
   function chaseStep(map, gengar, player) {
     const dc = player.col - gengar.col;
     const dr = player.row - gengar.row;
@@ -51,6 +53,7 @@ const MazeLevel = (() => {
       if (dc !== 0) opts.push(dc > 0 ? 'right' : 'left');
     }
     for (const dir of opts) {
+      if (dir === OPPOSITE[gengar.dir]) continue;
       const [dx, dy] = DELTAS[dir];
       if (isWalkable(map, gengar.row + dy, gengar.col + dx)) {
         return { row: gengar.row + dy, col: gengar.col + dx, dir };
@@ -59,17 +62,26 @@ const MazeLevel = (() => {
     return null;
   }
 
-  // Patrouille: meestal rechtdoor, anders een willekeurige begaanbare richting.
+  // Patrouille: meestal rechtdoor, anders links of rechts — nooit omdraaien.
+  // Alleen in een doodlopend stuk (geen andere uitweg) mag hij terug.
   function patrolStep(map, gengar, rand = Math.random) {
     const [dx, dy] = DELTAS[gengar.dir];
     if (rand() < 0.75 && isWalkable(map, gengar.row + dy, gengar.col + dx)) {
       return { row: gengar.row + dy, col: gengar.col + dx, dir: gengar.dir };
     }
     const options = DIRS.filter(d => {
+      if (d === OPPOSITE[gengar.dir]) return false;
       const [ddx, ddy] = DELTAS[d];
       return isWalkable(map, gengar.row + ddy, gengar.col + ddx);
     });
-    if (options.length === 0) return null;
+    if (options.length === 0) {
+      const back = OPPOSITE[gengar.dir];
+      const [bx, by] = DELTAS[back];
+      if (isWalkable(map, gengar.row + by, gengar.col + bx)) {
+        return { row: gengar.row + by, col: gengar.col + bx, dir: back };
+      }
+      return null;
+    }
     const dir = options[Math.floor(rand() * options.length)];
     const [ndx, ndy] = DELTAS[dir];
     return { row: gengar.row + ndy, col: gengar.col + ndx, dir };

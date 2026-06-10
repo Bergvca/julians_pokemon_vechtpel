@@ -64,7 +64,7 @@ describe('MazeLevel zicht & gedrag', () => {
 
   test('chaseStep: kiest de andere as als de eerste geblokkeerd is', () => {
     // Gengar (2,1) wil naar rechts (grootste delta), maar (2,2) is muur → dan omlaag
-    const gengar = { row: 2, col: 1, dir: 'up' };
+    const gengar = { row: 2, col: 1, dir: 'right' };
     const player = { row: 3, col: 3 };
     const next = chaseStep(OPEN, gengar, player);
     assertDeepEqual(next, { row: 3, col: 1, dir: 'down' });
@@ -74,6 +74,13 @@ describe('MazeLevel zicht & gedrag', () => {
     // Zelfde rij, enige route geblokkeerd door de muur
     const gengar = { row: 2, col: 1, dir: 'right' };
     const player = { row: 2, col: 3 };
+    assertEqual(chaseStep(OPEN, gengar, player), null);
+  });
+
+  test('chaseStep: draait nooit om', () => {
+    // Speler staat links, maar Gengar kijkt naar rechts → omdraaien mag niet
+    const gengar = { row: 1, col: 3, dir: 'right' };
+    const player = { row: 1, col: 1 };
     assertEqual(chaseStep(OPEN, gengar, player), null);
   });
 
@@ -87,7 +94,26 @@ describe('MazeLevel zicht & gedrag', () => {
     const gengar = { row: 1, col: 1, dir: 'up' }; // boven is muur
     const rand = (vals => () => vals.shift())([0.5, 0]);
     const next = patrolStep(OPEN, gengar, rand);
-    // opties in DIRS-volgorde: down (2,1) en right (1,2); rand 0 → down
+    // omdraaien (down) mag niet en links is muur → alleen right blijft over
+    assertDeepEqual(next, { row: 1, col: 2, dir: 'right' });
+  });
+
+  test('patrolStep: draait nooit om als er een andere richting is', () => {
+    // Gengar (3,1) kijkt naar links (muur); terug naar rechts mag niet → omhoog
+    const gengar = { row: 3, col: 1, dir: 'left' };
+    const next = patrolStep(OPEN, gengar, () => 0);
+    assertDeepEqual(next, { row: 2, col: 1, dir: 'up' });
+  });
+
+  test('patrolStep: draait alleen om in een doodlopend stuk', () => {
+    const DEAD_END = [
+      [T,T,T],
+      [T,P,T],
+      [T,P,T],
+      [T,T,T]
+    ];
+    const gengar = { row: 1, col: 1, dir: 'up' }; // vooruit, links en rechts zijn muur
+    const next = patrolStep(DEAD_END, gengar, () => 0);
     assertDeepEqual(next, { row: 2, col: 1, dir: 'down' });
   });
 });
